@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trắc Nghiệm Tiếng Anh - Website By Yakop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between font-sans overflow-x-hidden relative">
+
+    <!-- Header -->
+    <header class="bg-slate-800/90 backdrop-blur border-b border-slate-700/80 px-4 py-3 shadow-md sticky top-0 z-40">
+        <div class="max-w-xl mx-auto flex justify-between items-center">
+            <h1 class="text-base sm:text-lg font-bold text-cyan-400 truncate pr-2">🇬🇧 English Practice Quiz</h1>
+            <div class="flex items-center gap-2">
+                <!-- Highlighted Yakop Credit Badge in Header -->
+                <div class="bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-extrabold text-[11px] sm:text-xs px-3 py-1 rounded-full shadow-[0_0_12px_rgba(245,158,11,0.6)] border border-yellow-200 animate-pulse shrink-0">
+                    👑 Website By Yakop
+                </div>
+                <div id="timer" class="text-xs sm:text-sm font-mono bg-slate-700/80 px-2.5 py-1 rounded-lg text-amber-400 border border-slate-600 shrink-0">
+                    ⏱️ 45:00
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-xl mx-auto p-3 sm:p-4 w-full flex-grow my-auto">
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-5 sm:p-8 shadow-xl text-center relative overflow-hidden space-y-4">
+            <!-- Prominent Credit Banner in Start Screen -->
+            <div class="inline-flex items-center gap-1.5 bg-gradient-to-r from-cyan-500/20 to-amber-500/20 border border-amber-400/40 text-amber-300 font-bold text-xs sm:text-sm px-4 py-1.5 rounded-full shadow-md">
+                <span>✨</span> Created & Designed by <span class="text-amber-400 underline font-black">Yakop</span>
+            </div>
+            
+            <div class="text-4xl sm:text-5xl my-2">🎓</div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-cyan-300">Ôn Tập Trắc Nghiệm Tiếng Anh</h2>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                Bộ câu hỏi gồm 50 câu trắc nghiệm từ vựng, ngữ pháp, sắp xếp câu và từ đồng nghĩa/trái nghĩa.
+            </p>
+
+            <!-- User Name Input Box -->
+            <div class="pt-2 text-left">
+                <label for="username-input" class="block text-xs sm:text-sm font-semibold text-cyan-300 mb-1.5">
+                    👤 Nhập Họ và Tên của bạn để bắt đầu:
+                </label>
+                <input type="text" id="username-input" placeholder="Ví dụ: Nguyễn Văn A" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 transition" />
+                <p id="name-error" class="text-rose-400 text-xs mt-1 hidden">⚠️ Vui lòng nhập tên của bạn trước khi làm bài!</p>
+            </div>
+
+            <button onclick="validateAndStart()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-8 py-3.5 rounded-xl shadow-lg transition active:scale-95 text-base">
+                🚀 Bắt Đầu Làm Bài
+            </button>
+
+            <!-- Leaderboard / Submissions Section -->
+            <div class="pt-4 border-t border-slate-700/80 text-left">
+                <h3 class="text-xs sm:text-sm font-bold text-amber-400 flex items-center gap-1.5 mb-2.5">
+                    <span>🏆</span> BẢNG VINH DANH CÁC BẠN ĐÃ LÀM BÀI (YAKOP)
+                </h3>
+                <div id="recent-players-list" class="space-y-1.5 max-h-36 overflow-y-auto pr-1 text-xs">
+                    <!-- Dynamic List Injected via JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden space-y-4">
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 rounded-full h-2.5 border border-slate-700 overflow-hidden">
+                <div id="progress-bar" class="bg-cyan-500 h-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-3 text-xs sm:text-sm text-slate-400">
+                    <span id="question-category" class="bg-cyan-900/50 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-700/50 truncate max-w-[200px] sm:max-w-none">English Test</span>
+                    <span id="question-counter" class="font-medium">Câu 1 / 50</span>
+                </div>
+                <h3 id="question-text" class="text-base sm:text-lg font-semibold mb-5 text-slate-100 leading-relaxed whitespace-pre-line"></h3>
+
+                <!-- Options -->
+                <div id="options-container" class="space-y-2.5">
+                    <!-- Options injected via JS -->
+                </div>
+
+                <!-- Instant Feedback Banner -->
+                <div id="feedback-banner" class="hidden mt-4 p-3.5 rounded-xl border transition-all text-xs sm:text-sm font-medium"></div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex justify-between items-center pt-2 gap-3">
+                <button id="prev-btn" onclick="prevQuestion()" class="flex-1 bg-slate-700/90 hover:bg-slate-600 text-slate-200 font-semibold py-3 px-4 rounded-xl transition disabled:opacity-30 disabled:cursor-not-allowed text-sm active:scale-95">
+                    ⬅️ Trước
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition text-sm active:scale-95">
+                    Tiếp ➡️
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl text-center space-y-5">
+            <h2 class="text-2xl sm:text-3xl font-bold text-cyan-300">🎉 Hoàn Thành Bài Kiểm Tra!</h2>
+            <div class="text-5xl sm:text-6xl font-black text-amber-400 my-2" id="score-display">0 / 50</div>
+            <p id="result-message" class="text-sm sm:text-base text-slate-300 px-2"></p>
+            <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                <button id="retry-wrong-btn" onclick="retryWrongQuestions()" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-5 py-3 rounded-xl shadow-lg transition active:scale-95 text-sm">
+                    🔁 Làm Lại Những Câu Sai
+                </button>
+                <button onclick="restartQuiz()" class="w-full sm:w-auto bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-3 rounded-xl shadow-lg transition active:scale-95 text-sm">
+                    🔄 Bắt Đầu Lại Từ Đầu
+                </button>
+                <button onclick="reviewAnswers()" class="w-full sm:w-auto bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold px-5 py-3 rounded-xl transition active:scale-95 text-sm">
+                    📝 Xem Chi Tiết
+                </button>
+            </div>
+        </div>
+
+        <!-- Review Screen -->
+        <div id="review-screen" class="hidden space-y-4">
+            <div class="flex justify-between items-center bg-slate-800 p-3.5 rounded-xl border border-slate-700">
+                <h3 class="text-base sm:text-lg font-bold text-cyan-300">Chi Tiết Đáp Án</h3>
+                <button onclick="backToResult()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs sm:text-sm active:scale-95">Quay lại</button>
+            </div>
+            <div id="review-container" class="space-y-3">
+                <!-- Review cards injected via JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800/80 border-t border-slate-700/80 text-center py-3 text-xs text-slate-400">
+        English Practice Quiz - Created by <span class="text-amber-400 font-bold">Yakop</span>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        // Web Audio API for fun sound effects
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+        let userName = "";
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // Display recent players list from localStorage
+        function loadRecentPlayers() {
+            const listContainer = document.getElementById('recent-players-list');
+            const players = JSON.parse(localStorage.getItem('yakop_quiz_players') || '[]');
+
+            if (players.length === 0) {
+                listContainer.innerHTML = `<div class="text-slate-500 italic py-1">Chưa có ai hoàn thành bài kiểm tra. Hãy là người đầu tiên!</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            players.slice(-10).reverse().forEach((p, index) => {
+                const item = document.createElement('div');
+                item.className = "flex justify-between items-center bg-slate-900/60 px-3 py-2 rounded-lg border border-slate-700/60";
+                item.innerHTML = `
+                    <div class="flex items-center gap-2 truncate pr-2">
+                        <span class="font-bold text-amber-400 shrink-0">#${index + 1}</span>
+                        <span class="font-semibold text-slate-200 truncate">${p.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span class="bg-cyan-900/80 text-cyan-300 px-2 py-0.5 rounded font-mono font-bold text-[11px]">${p.score}/50</span>
+                        <span class="text-slate-400 text-[10px]">${p.time}</span>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function validateAndStart() {
+            const nameInput = document.getElementById('username-input');
+            const errorMsg = document.getElementById('name-error');
+            const inputVal = nameInput.value.trim();
+
+            if (!inputVal) {
+                errorMsg.classList.remove('hidden');
+                nameInput.classList.add('border-rose-500');
+                return;
+            }
+
+            errorMsg.classList.add('hidden');
+            nameInput.classList.remove('border-rose-500');
+            userName = inputVal;
+            startQuiz();
+        }
+
+        // Initialize view on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadRecentPlayers();
+        });
+
+        // Fun Correct Sound (Cheerful Chime)
+        function playCorrectSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc1.type = 'sine';
+            osc2.type = 'triangle';
+
+            osc1.frequency.setValueAtTime(523.25, now); // C5
+            osc1.frequency.exponentialRampToValueAtTime(659.25, now + 0.1); // E5
+            osc1.frequency.exponentialRampToValueAtTime(783.99, now + 0.2); // G5
+            osc1.frequency.exponentialRampToValueAtTime(1046.50, now + 0.3); // C6
+
+            osc2.frequency.setValueAtTime(261.63, now);
+            osc2.frequency.exponentialRampToValueAtTime(523.25, now + 0.3);
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 0.5);
+            osc2.stop(now + 0.5);
+        }
+
+        // Fun Wrong Sound (Funny Boing / Buzzer)
+        function playWrongSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            
+            // Wobble pitch down
+            osc.frequency.setValueAtTime(220, now);
+            osc.frequency.linearRampToValueAtTime(110, now + 0.15);
+            osc.frequency.linearRampToValueAtTime(180, now + 0.25);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.45);
+
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start(now);
+            osc.stop(now + 0.45);
+        }
+
+        // 50 Questions Dataset
+        const allQuestions = [
+            {
+                question: "Mark the word OPPOSITE in meaning to the underlined part:\nI noticed that you was looking a little UNDER THE WEATHER. You coughed a lot.",
+                options: ["as pale as a ghost", "green around the gills", "in the pink", "off-color"],
+                correct: 2
+            },
+            {
+                question: "Christopher Columbus __________ America more than 500 years ago.",
+                options: ["had been discovering", "has discovered", "discovered", "had discovered"],
+                correct: 2
+            },
+            {
+                question: "A lot of rivers are __________ with waste from local factories.",
+                options: ["reused", "protected", "made", "polluted"],
+                correct: 3
+            },
+            {
+                question: "Smart cities use modern technologies to save time and provide better __________.",
+                options: ["services", "agriculture", "industry", "economy"],
+                correct: 0
+            },
+            {
+                question: "All students __________ wear uniforms at school because it is a rule.",
+                options: ["ought to", "must", "should", "have to"],
+                correct: 3
+            },
+            {
+                question: "Mai __________ with her mother to buy some food two hours ago.",
+                options: ["goes out", "gone out", "went out", "was gone"],
+                correct: 2
+            },
+            {
+                question: "Mark the word OPPOSITE in meaning to the underlined part:\nGetting enough sleep can REDUCE stress and improve your mood.",
+                options: ["decrease", "increase", "relieve", "ease"],
+                correct: 1
+            },
+            {
+                question: "The animals had died __________ starvation.",
+                options: ["on", "to", "of", "for"],
+                correct: 2
+            },
+            {
+                question: "She doesn't want to follow in her father's __________ as a doctor.",
+                options: ["attitude", "privacy", "footsteps", "tradition"],
+                correct: 2
+            },
+            {
+                question: "Indicate the correct arrangement of the sentences to make a meaningful conversation:\na. Mai: Sounds very stressful! Have you thought of inviting a famous celebrity?\nb. Mai: Hi, how has your day been so far?\nc. Mark: I've been very busy! I'm working on promoting a charity event. It's a lot of work.",
+                options: ["c - b - a", "b - c - a", "b - a - c", "a - c - b"],
+                correct: 1
+            },
+            {
+                question: "Mark the word CLOSEST in meaning to the underlined part:\nIn my opinion, the benefits of smart technologies OUTWEIGH the DRAWBACKS.",
+                options: ["disadvantages", "advantages", "effects", "measures"],
+                correct: 0
+            },
+            {
+                question: "My parents don't let me get married until I graduate from university and they never __________ their mind about that.",
+                options: ["keep", "impose", "focus", "change"],
+                correct: 3
+            },
+            {
+                question: "If you still want to maintain this relationship, you __________ behave improperly like that.",
+                options: ["don't have to", "ought to not", "mustn't", "shouldn't"],
+                correct: 3
+            },
+            {
+                question: "Daisy got enough sleep last night, so today she is full of __________.",
+                options: ["stress", "energy", "injuries", "exercise"],
+                correct: 1
+            },
+            {
+                question: "They __________ Dorothy since last Saturday.",
+                options: ["don't see", "haven't seen", "didn't see", "hadn't seen"],
+                correct: 1
+            },
+            {
+                question: "Indicate the best arrangement of sentences to make a meaningful text:\na. Young people benefit much from having a balanced diet.\nb. Furthermore, once they are strong, they can stay away from many diseases related to overweight or heart diseases.\nc. In the first place, people who have a well-balanced diet will be provided with energy that they need to keep active throughout the day.\nd. Besides, a good diet helps them stay strong and healthy.\ne. Finally, a balanced diet keeps people in a good state of mind.",
+                options: ["a - e - c - d - b", "d - e - c - b - a", "a - c - d - b - e", "a - e - d - b - c"],
+                correct: 2
+            },
+            {
+                question: "Mark the word CLOSEST in meaning to the underlined part:\nSome smart technologies are difficult to use and without training, city DWELLERS might find them useless.",
+                options: ["migrants", "residents", "immigrants", "emigrants"],
+                correct: 1
+            },
+            {
+                question: "Since he __________, I have heard nothing from him.",
+                options: ["had left", "left", "has left", "was left"],
+                correct: 1
+            },
+            {
+                question: "Start following these five habits to add years to your life __________.",
+                options: ["expect", "expectant", "expectation", "expectancy"],
+                correct: 3
+            },
+            {
+                question: "Linda __________ anything because she was full.",
+                options: ["weren't eating", "wasn't eat", "didn't eat", "doesn't eat"],
+                correct: 2
+            },
+            {
+                question: "Young people __________ obey their parents.",
+                options: ["will", "ought to", "may", "must"],
+                correct: 3
+            },
+            {
+                question: "Indicate the correct arrangement of the sentences to make a meaningful conversation:\na. Nam: Yes, the food is really delicious, and Mai is an excellent host.\nb. Mai: Nice party, isn't it?\nc. Mai: Yes, We're having a great time.",
+                options: ["b - c - a", "b - a - c", "c - a - b", "a - c - b"],
+                correct: 1
+            },
+            {
+                question: "Mark the word OPPOSITE in meaning to the underlined part:\nWe greatly RESPECT my teacher for all of the best things that she brought to us.",
+                options: ["look for", "look down on", "look up to", "look forwards to"],
+                correct: 1
+            },
+            {
+                question: "His mother __________ when he was a small boy.",
+                options: ["died", "had died", "has died", "dies"],
+                correct: 0
+            },
+            {
+                question: "We __________ eat as much fruit as possible in order to get enough vitamins for our bodies.",
+                options: ["had better not", "should", "ought not to", "have to"],
+                correct: 1
+            },
+            {
+                question: "Mark the word CLOSEST in meaning to the underlined part:\nI noticed that you was looking a little UNDER THE WEATHER. You coughed a lot.",
+                options: ["sleepy", "unhappy", "healthy", "ill"],
+                correct: 3
+            },
+            {
+                question: "If you still want to maintain this relationship, you __________ behave improperly like that.",
+                options: ["ought to not", "shouldn't", "mustn't", "don't have to"],
+                correct: 1
+            },
+            {
+                question: "You __________ tell anyone what I've revealed to you. It's still a secret.",
+                options: ["mustn't", "had better not", "ought not to", "don't have to"],
+                correct: 0
+            },
+            {
+                question: "You look totally exhausted. You __________ take a rest instead of working overtime.",
+                options: ["should", "has better", "ought", "must"],
+                correct: 0
+            },
+            {
+                question: "Sneezing is the most common way of spreading an __________.",
+                options: ["infection", "ignorance", "ache", "injury"],
+                correct: 0
+            },
+            {
+                question: "The __________ refers to the difference in attitudes or behavior between a younger generation and the older one.",
+                options: ["argument", "conflict", "disagreement", "generation gap"],
+                correct: 3
+            },
+            {
+                question: "Lan: What about going to the Seoul restaurant?\nHuong: That __________ great!",
+                options: ["tastes", "was", "gets", "sounds"],
+                correct: 3
+            },
+            {
+                question: "I haven't met Mai again since we __________ school 5 years ago.",
+                options: ["left", "leave", "had left", "have left"],
+                correct: 0
+            },
+            {
+                question: "Where __________ John from yesterday?",
+                options: ["am", "is", "was", "were"],
+                correct: 2
+            },
+            {
+                question: "Parents can't always respond effectively to aggressive __________ of their children.",
+                options: ["generation", "roles", "thought", "behaviour"],
+                correct: 3
+            },
+            {
+                question: "She was very pleased __________ her exam results.",
+                options: ["on", "with", "to", "for"],
+                correct: 1
+            },
+            {
+                question: "Peter __________ as a teacher for 2 years.",
+                options: ["has work", "have worked", "has worked", "have work"],
+                correct: 2
+            },
+            {
+                question: "Whatever you do, you __________ touch that switch. It's very dangerous.",
+                options: ["mustn't", "ought not to", "shouldn't", "have work"],
+                correct: 0
+            },
+            {
+                question: "My car broke down yesterday, so I __________ catch a taxi to the office.",
+                options: ["have to", "had better", "had to", "has to"],
+                correct: 2
+            },
+            {
+                question: "Put away your electronic __________, turn off the TV, and chill out on your bed or the sofa for 10-15 minutes before you try to go to sleep.",
+                options: ["books", "appliances", "devices", "mails"],
+                correct: 2
+            },
+            {
+                question: "I __________ TV last night.",
+                options: ["didn't watch", "haven't watched", "hasn't watched", "don't watch"],
+                correct: 0
+            },
+            {
+                question: "Helen has already __________ lunch.",
+                options: ["have", "has", "had", "having"],
+                correct: 2
+            },
+            {
+                question: "A lot of people nowadays have become addicted __________ the internet.",
+                options: ["at", "to", "on", "for"],
+                correct: 1
+            },
+            {
+                question: "He __________ sushi many times since then.",
+                options: ["eats", "has eaten", "ate", "didn't eat"],
+                correct: 1
+            },
+            {
+                question: "The chef tasted the meat __________ before presenting it to the President.",
+                options: ["cautiously", "more cautious", "cautious", "much cautiously"],
+                correct: 0
+            },
+            {
+                question: "Arrangement for Vocational training text:\na. Vocational education prepares students for specific jobs.\nb. It provides practical skills.\nc. It helps learners enter the workforce early.\nd. This is suitable for those who prefer hands-on learning.",
+                options: ["a - b - d - e - c", "c - b - d - e - a", "a - b - e - c - d", "c - e - b - d - a"],
+                correct: 2
+            },
+            {
+                question: "I __________ there once a long time ago and __________ back since.",
+                options: ["had been / was not", "have been / will not be", "would be / had not been", "was / have not been"],
+                correct: 3
+            },
+            {
+                question: "Increasing numbers of children are __________ from mental health problems due to bad habits.",
+                options: ["improving", "harming", "recovering", "suffering"],
+                correct: 3
+            },
+            {
+                question: "Since he __________, I have heard nothing from him.",
+                options: ["had left", "left", "has left", "was left"],
+                correct: 1
+            },
+            {
+                question: "A: Why do you smell the milk?\nB: Because it __________ terrible. You should throw it away.",
+                options: ["smells", "sounds", "is smelling", "sounded"],
+                correct: 0
+            }
+        ];
+
+        let questions = [...allQuestions];
+        let currentQuestion = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let timeLeft = 45 * 60;
+
+        function startQuiz() {
+            initAudio();
+            questions = [...allQuestions];
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                    return;
+                }
+                timeLeft--;
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById('timer').innerText = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-category').innerText = "English Practice";
+            document.getElementById('question-counter').innerText = `Câu ${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('question-text').innerText = q.question;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            const feedbackBanner = document.getElementById('feedback-banner');
+            feedbackBanner.classList.add('hidden');
+
+            const hasAnswered = userAnswers[currentQuestion] !== null;
+            const selectedIdx = userAnswers[currentQuestion];
+
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                let btnStyle = "bg-slate-700/50 border-slate-600 hover:bg-slate-700 text-slate-200 active:scale-[0.99]";
+
+                if (hasAnswered) {
+                    btn.disabled = true;
+                    if (index === q.correct) {
+                        btnStyle = "bg-emerald-600/30 border-emerald-500 text-emerald-200 font-semibold";
+                    } else if (index === selectedIdx && selectedIdx !== q.correct) {
+                        btnStyle = "bg-rose-600/30 border-rose-500 text-rose-200 font-semibold";
+                    } else {
+                        btnStyle = "bg-slate-800/40 border-slate-700 text-slate-500 opacity-40";
+                    }
+                }
+
+                btn.className = `w-full text-left p-3.5 sm:p-4 rounded-xl border transition flex items-center justify-between text-sm sm:text-base ${btnStyle}`;
+                
+                let statusIcon = '';
+                if (hasAnswered) {
+                    if (index === q.correct) statusIcon = '<span class="shrink-0 ml-2">✅</span>';
+                    else if (index === selectedIdx) statusIcon = '<span class="shrink-0 ml-2">❌</span>';
+                }
+
+                btn.innerHTML = `
+                    <div class="flex items-start gap-2.5 sm:gap-3 w-full pr-1">
+                        <span class="font-bold uppercase shrink-0">${String.fromCharCode(65 + index)}.</span>
+                        <span class="break-words w-full">${opt}</span>
+                    </div>
+                    ${statusIcon}
+                `;
+                
+                if (!hasAnswered) {
+                    btn.onclick = () => selectOption(index);
+                }
+                optionsContainer.appendChild(btn);
+            });
+
+            if (hasAnswered) {
+                feedbackBanner.classList.remove('hidden');
+                const isCorrect = selectedIdx === q.correct;
+                if (isCorrect) {
+                    feedbackBanner.className = "mt-4 p-3.5 rounded-xl border bg-emerald-950/40 border-emerald-600 text-emerald-300";
+                    feedbackBanner.innerHTML = "🎯 <strong>Chính xác!</strong> Excellent job!";
+                } else {
+                    feedbackBanner.className = "mt-4 p-3.5 rounded-xl border bg-rose-950/40 border-rose-600 text-rose-300";
+                    feedbackBanner.innerHTML = `❌ <strong>Chưa chính xác!</strong> Đáp án đúng là <strong>${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}</strong>`;
+                }
+            }
+
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestion === questions.length - 1) {
+                nextBtn.innerText = "Nộp bài ✅";
+                nextBtn.onclick = submitQuiz;
+            } else {
+                nextBtn.innerText = "Tiếp ➡️";
+                nextBtn.onclick = nextQuestion;
+            }
+        }
+
+        function selectOption(index) {
+            userAnswers[currentQuestion] = index;
+            const isCorrect = index === questions[currentQuestion].correct;
+            
+            if (isCorrect) {
+                playCorrectSound();
+            } else {
+                playWrongSound();
+            }
+
+            loadQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                loadQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let score = 0;
+            let wrongCount = 0;
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    score++;
+                } else {
+                    wrongCount++;
+                }
+            });
+
+            // Save user result to LocalStorage
+            if (userName) {
+                const players = JSON.parse(localStorage.getItem('yakop_quiz_players') || '[]');
+                const now = new Date();
+                const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} ${now.getDate()}/${now.getMonth()+1}`;
+                
+                players.push({
+                    name: userName,
+                    score: score,
+                    time: timeStr
+                });
+                localStorage.setItem('yakop_quiz_players', JSON.stringify(players));
+            }
+
+            document.getElementById('score-display').innerText = `${score} / ${questions.length}`;
+            let msg = "";
+            if (score === questions.length) msg = `Chúc mừng ${userName}! Tuyệt vời ông mặt trời! Yakop rất tự hào về bạn! 🌟`;
+            else if (score >= questions.length * 0.8) msg = `Xuất sắc ${userName}! Trình độ Tiếng Anh của bạn rất đỉnh! 👍`;
+            else if (score >= questions.length * 0.5) msg = `Khá tốt ${userName}! Hãy làm lại những câu sai để thuộc nằm lòng nhé. 💪`;
+            else msg = `Cố lên ${userName}! Hãy luyện tập thêm để nâng cao vốn từ vựng và ngữ pháp nhé! 📚`;
+            
+            document.getElementById('result-message').innerText = msg;
+
+            const retryWrongBtn = document.getElementById('retry-wrong-btn');
+            if (wrongCount > 0 && score < questions.length) {
+                retryWrongBtn.classList.remove('hidden');
+            } else {
+                retryWrongBtn.classList.add('hidden');
+            }
+        }
+
+        function retryWrongQuestions() {
+            const wrongQuestions = questions.filter((q, idx) => userAnswers[idx] !== q.correct);
+            questions = wrongQuestions;
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function reviewAnswers() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('review-screen').classList.remove('hidden');
+
+            const container = document.getElementById('review-container');
+            container.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const userChoice = userAnswers[idx];
+                const isCorrect = userChoice === q.correct;
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border text-sm ${isCorrect ? 'bg-emerald-950/20 border-emerald-800/50' : 'bg-rose-950/20 border-rose-800/50'}`;
+                
+                let optionsHtml = '';
+                q.options.forEach((opt, oIdx) => {
+                    let badge = '';
+                    if (oIdx === q.correct) badge = ' <span class="text-emerald-400 font-bold">(Đúng)</span>';
+                    if (oIdx === userChoice && !isCorrect) badge = ' <span class="text-rose-400 font-bold">(Bạn chọn)</span>';
+                    else if (oIdx === userChoice && isCorrect) badge = ' <span class="text-emerald-400 font-bold">(Bạn chọn)</span>';
+
+                    optionsHtml += `<div class="my-1 ${oIdx === q.correct ? 'text-emerald-300 font-semibold' : 'text-slate-300'}">▪️ ${String.fromCharCode(65 + oIdx)}. ${opt}${badge}</div>`;
+                });
+
+                div.innerHTML = `
+                    <div class="font-semibold text-slate-100 mb-2 whitespace-pre-line">Câu ${idx + 1}: ${q.question}</div>
+                    <div class="space-y-1 mb-2">${optionsHtml}</div>
+                    <div class="text-xs ${isCorrect ? 'text-emerald-400' : 'text-rose-400'} font-medium pt-1">
+                        ${isCorrect ? '✔️ Trả lời đúng' : `❌ Đáp án chuẩn: ${String.fromCharCode(65 + q.correct)}`}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function backToResult() {
+            document.getElementById('review-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+        }
+
+        function restartQuiz() {
+            questions = [...allQuestions];
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            timeLeft = 45 * 60;
+            loadRecentPlayers();
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
